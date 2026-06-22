@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const testRoutes = require("./src/routes/test.routes");
 const connectDB = require("./src/config/db");
-
+const userRoutes = require("./src/routes/user.routes");
 dotenv.config();
 
 connectDB();
@@ -18,7 +18,7 @@ app.get("/", (req, res) => {
   res.send("Student City Relocation API Running");
 });
 app.use("/api/test", testRoutes);
-
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
