@@ -4,6 +4,11 @@ const cors = require("cors");
 const testRoutes = require("./src/routes/test.routes");
 const connectDB = require("./src/config/db");
 const userRoutes = require("./src/routes/user.routes");
+const hostelRoutes = require(
+  "./src/routes/hostel.routes"
+);
+
+
 dotenv.config();
 
 connectDB();
@@ -19,6 +24,11 @@ app.get("/", (req, res) => {
 });
 app.use("/api/test", testRoutes);
 app.use("/api/users", userRoutes);
+app.use(
+  "/api/hostels",
+  hostelRoutes
+);
+
 
 const PORT = process.env.PORT || 5000;
 
