@@ -7,7 +7,7 @@ const userRoutes = require("./src/routes/user.routes");
 const hostelRoutes = require(
   "./src/routes/hostel.routes"
 );
-
+const googleRoutes = require("./src/routes/google.routes");
 
 dotenv.config();
 
@@ -28,7 +28,7 @@ app.use(
   "/api/hostels",
   hostelRoutes
 );
-
+app.use("/api/google", googleRoutes);
 
 const PORT = process.env.PORT || 5000;
 
