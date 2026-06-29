@@ -3,6 +3,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import GoogleSuccess from "./pages/GoogleSuccess";
+import ProtectedRoute from "./components/ProtectedRoutes";
+import ForgotPassword from "./pages/ForgotPassword";
+import VerifyOTP from "./pages/VerifyOTP";
+import ResetPassword from "./pages/ResetPassword";
 
 function App() {
   return (
@@ -10,7 +15,21 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<ProtectedRoute>   <Dashboard />   </ProtectedRoute>  } />        
+        <Route path="/google-success" element={<GoogleSuccess />} />
+        <Route
+  path="/forgot-password"
+  element={<ForgotPassword />}
+/>
+<Route
+  path="/verify-otp"
+  element={<VerifyOTP />}
+/>
+<Route
+  path="/reset-password"
+  element={<ResetPassword />}
+/>
+
       </Routes>
     </BrowserRouter>
   );

@@ -183,10 +183,12 @@ function Login() {
 						
 						{/* Forgot Password */} 
 						<div className="flex justify-end mt-3"> 
-							<button type="button" 
-							className="text-blue-500 hover:text-blue-400 cursor-pointer" > 
-							Forgot Password? 
-							</button> 
+						<Link
+  to="/forgot-password"
+  className="text-blue-500 hover:text-blue-400"
+>
+  Forgot Password?
+</Link>
 						</div> 
 						
 						{/* Login Button */} 
@@ -217,7 +219,12 @@ function Login() {
 {/* Google Login */}
 
 <button
-type="button"
+  type="button"
+  onClick={() => {
+    window.location.href =
+      "http://localhost:5000/api/users/auth/google";
+  }}
+  
 className="w-full h-14 border border-gray-700 rounded-xl bg-[#1F2937] hover:bg-[#293548] transition-all duration-300 flex items-center justify-center gap-3 text-white font-medium cursor-pointer"
 
 >

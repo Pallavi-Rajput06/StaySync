@@ -52,9 +52,11 @@ const handleSubmit = async (e) => {
       password: formData.password,
     });
 
-    toast.success(response.data.message);
+    localStorage.setItem("token", response.data.token);
 
-    navigate("/dashboard");
+toast.success(response.data.message);
+
+navigate("/dashboard");
   } catch (error) {
     toast.error(
       error.response?.data?.message || "Registration Failed"
@@ -281,24 +283,22 @@ className="w-full h-14 mt-8 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg
   </div>
 
 {/* Google */}
-
 <button
-type="button"
-className="w-full h-14 border border-gray-700 rounded-xl bg-[#1F2937] hover:bg-[#293548] flex items-center justify-center gap-3 text-white"
-
+  type="button"
+  onClick={() => {
+    console.log("Google Clicked");
+    window.location.href = "http://localhost:5000/api/users/auth/google";
+  }}
+  className="w-full h-14 border border-gray-700 rounded-xl bg-[#1F2937] hover:bg-[#293548] flex items-center justify-center gap-3 text-white cursor-pointer"
 >
+  <img
+    src="https://www.svgrepo.com/show/475656/google-color.svg"
+    alt="Google"
+    className="w-6 h-6"
+  />
 
-
-<img
-  src="https://www.svgrepo.com/show/475656/google-color.svg"
-  alt="Google"
-  className="w-6 h-6"
-/>
-
-Continue with Google
-
-
-  </button>
+  Continue with Google
+</button>
 
   <p className="text-center text-gray-400 mt-8">
 

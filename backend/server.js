@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
 const cors = require("cors");
 const testRoutes = require("./src/routes/test.routes");
@@ -7,9 +8,12 @@ const userRoutes = require("./src/routes/user.routes");
 const hostelRoutes = require(
   "./src/routes/hostel.routes"
 );
-const googleRoutes = require("./src/routes/google.routes");
 
-dotenv.config();
+const mailRoutes = require("./src/routes/mail.routes");
+
+const session = require("express-session");
+
+const passport = require("./src/config/passport");
 
 connectDB();
 
@@ -17,6 +21,16 @@ const app = express();
 
 app.use(express.json());
 
+
+app.use(
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(cors());
 
 app.get("/", (req, res) => {
@@ -28,7 +42,12 @@ app.use(
   "/api/hostels",
   hostelRoutes
 );
-app.use("/api/google", googleRoutes);
+app.use("/api/mail", mailRoutes);
+
+
+
+
+
 
 const PORT = process.env.PORT || 5000;
 
