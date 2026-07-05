@@ -5,19 +5,27 @@ const hostelSchema = new mongoose.Schema(
     hostelName: {
       type: String,
       required: true,
+      trim: true,
     },
 
     city: {
       type: String,
       required: true,
+      trim: true,
     },
 
     area: {
       type: String,
       required: true,
+      trim: true,
     },
 
     address: {
+      type: String,
+      required: true,
+    },
+
+    description: {
       type: String,
       required: true,
     },
@@ -33,16 +41,40 @@ const hostelSchema = new mongoose.Schema(
       required: true,
     },
 
-    facilities: [String],
-
-    images: [String],
-
-    rating: {
-      type: Number,
-      default: 0,
+    roomType: {
+      type: String,
+      enum: ["Single", "Double", "Triple", "Dormitory"],
+      required: true,
     },
 
-    safetyScore: {
+    facilities: [
+      {
+        type: String,
+      },
+    ],
+
+    images: [
+      {
+        type: String,
+      },
+    ],
+
+    ownerName: {
+      type: String,
+      required: true,
+    },
+
+    contactNumber: {
+      type: String,
+      required: true,
+    },
+
+    location: {
+      latitude: Number,
+      longitude: Number,
+    },
+
+    rating: {
       type: Number,
       default: 0,
     },

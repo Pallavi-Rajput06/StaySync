@@ -7,6 +7,7 @@ const createHostel = async (req, res) => {
   
 	  res.status(201).json({
 		success: true,
+		message: "Hostel Added Successfully",
 		hostel,
 	  });
 	} catch (error) {
@@ -63,6 +64,37 @@ const createHostel = async (req, res) => {
   };
 
 
+  const updateHostel = async (req, res) => {
+	try {
+	  const hostel = await Hostel.findByIdAndUpdate(
+		req.params.id,
+		req.body,
+		{
+		  new: true,
+		  runValidators: true,
+		}
+	  );
+  
+	  if (!hostel) {
+		return res.status(404).json({
+		  success: false,
+		  message: "Hostel not found",
+		});
+	  }
+  
+	  res.status(200).json({
+		success: true,
+		message: "Hostel Updated Successfully",
+		hostel,
+	  });
+	} catch (error) {
+	  res.status(500).json({
+		success: false,
+		message: error.message,
+	  });
+	}
+  };
+
 
   const deleteHostel = async (req, res) => {
 	try {
@@ -83,7 +115,7 @@ const createHostel = async (req, res) => {
   
 	  res.status(200).json({
 		success: true,
-		message: "Hostel deleted",
+		message: "Hostel deleted Successfully",
 	  });
 	} catch (error) {
 	  res.status(500).json({
@@ -98,5 +130,6 @@ const createHostel = async (req, res) => {
 	createHostel,
 	getAllHostels,
 	getSingleHostel,
+	updateHostel,
 	deleteHostel,
   };

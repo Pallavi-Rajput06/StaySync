@@ -1,31 +1,32 @@
-import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import HeroSection from "../components/dashboard/HeroSection";
+import CitySection from "../components/dashboard/CitySection";
+import FeaturedHostels from "../components/dashboard/FeaturedHostels";
+import { useState } from "react";
 
 function Dashboard() {
-  const navigate = useNavigate();
 
-  const handleLogout = () => {
-	localStorage.removeItem("token");
-	localStorage.removeItem("user");
-  
-	navigate("/");
-  };
+  const [search, setSearch] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+
   return (
-    <div className="min-h-screen bg-[#0F172A]">
+    <div className="bg-[#F8FAFC] min-h-screen">
 
-      <div className="flex justify-between items-center px-10 py-6 border-b border-gray-700">
+      <Navbar />
 
-        <h1 className="text-3xl font-bold text-white">
-          Dashboard
-        </h1>
+      <HeroSection
+        search={search}
+        setSearch={setSearch}
+      />
 
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg text-white cursor-pointer"
-        >
-          Logout
-        </button>
-
-      </div>
+<CitySection
+  selectedCity={selectedCity}
+  setSelectedCity={setSelectedCity}
+/>
+<FeaturedHostels
+  search={search}
+  selectedCity={selectedCity}
+/>
 
     </div>
   );
