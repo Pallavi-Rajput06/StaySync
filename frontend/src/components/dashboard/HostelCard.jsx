@@ -6,8 +6,10 @@ import {
 	BedDouble,
 	BadgeCheck,
   } from "lucide-react";
+  import { useNavigate } from "react-router-dom";
   
   function HostelCard({ hostel }) {
+	const navigate = useNavigate();
 	return (
 	  <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
   
@@ -105,8 +107,20 @@ import {
 			  Meals
   
 			</div>
+
+			
   
 		  </div>
+		  <button
+  onClick={() =>
+    navigate(`/hostels/${hostel._id}`)
+  }
+  className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-semibold"
+>
+
+  View Details
+
+</button>
   
 		</div>
   

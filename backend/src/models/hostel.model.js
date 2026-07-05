@@ -64,25 +64,45 @@ const hostelSchema = new mongoose.Schema(
       required: true,
     },
 
-    contactNumber: {
-      type: String,
-      required: true,
-    },
-
     location: {
-      latitude: Number,
-      longitude: Number,
+      latitude: {
+        type: Number,
+        required: true,
+      },
+      longitude: {
+        type: Number,
+        required: true,
+      },
     },
-
     rating: {
       type: Number,
       default: 0,
     },
 
+    totalReviews: {
+      type: Number,
+      default: 0,
+    },
     verified: {
       type: Boolean,
       default: false,
     },
+    available: {
+      type: Boolean,
+      default: true,
+    },
+    
+    ownerPhone: {
+      type: String,
+      required: true,
+    },
+    ownerEmail: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
+    },
+   
   },
   {
     timestamps: true,

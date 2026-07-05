@@ -8,6 +8,8 @@ import ProtectedRoute from "./components/ProtectedRoutes";
 import ForgotPassword from "./pages/ForgotPassword";
 import VerifyOTP from "./pages/VerifyOTP";
 import ResetPassword from "./pages/ResetPassword";
+import HostelDetails from "./pages/HostelDetails";
+
 
 function App() {
   return (
@@ -28,6 +30,11 @@ function App() {
 <Route
   path="/reset-password"
   element={<ResetPassword />}
+/>
+
+<Route
+  path="/hostels/:id"
+  element={<HostelDetails />}
 />
 
       </Routes>

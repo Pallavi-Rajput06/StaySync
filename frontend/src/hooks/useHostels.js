@@ -5,20 +5,18 @@ function useHostels() {
   const [hostels, setHostels] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchHostels = async () => {
-    try {
-      const response = await API.get("/hostels");
-
-      setHostels(response.data.hostels);
-
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    const fetchHostels = async () => {
+      try {
+        const res = await API.get("/hostels");
+        setHostels(res.data.hostels);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchHostels();
   }, []);
 
