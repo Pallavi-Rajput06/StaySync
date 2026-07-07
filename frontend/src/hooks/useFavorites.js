@@ -1,24 +1,19 @@
 import { useEffect, useState } from "react";
 import API from "../services/axios";
-import { useDispatch } from "react-redux";
-import { setFavorites as setFavoritesRedux } from "../redux/slices/favoritesSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setFavorites } from "../redux/slices/favoritesSlice";
 
 function useFavorites() {
   const dispatch = useDispatch();
-  
   const [loading, setLoading] = useState(true);
+  const favorites = useSelector((state) => state.favorites.favorites);
 
   const fetchFavorites = async () => {
     try {
       const res = await API.get("/users/favorites");
-	  setFavorites(res.data.favorites);
-
-	  dispatch(
-		setFavoritesRedux(
-		  res.data.favorites.map((hostel) => hostel._id)
-		)
-	  );    } catch (error) {
-      console.log(error);
+      dispatch(setFavorites(res.data.favorites));
+    } catch (error) {
+      console.log("Error fetching favorites in hook:", error);
     } finally {
       setLoading(false);
     }
@@ -26,13 +21,12 @@ function useFavorites() {
 
   useEffect(() => {
     fetchFavorites();
-  }, []);
+  }, [dispatch]);
 
   return {
     favorites,
     loading,
     fetchFavorites,
-    setFavorites,
   };
 }
 

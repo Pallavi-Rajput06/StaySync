@@ -10,6 +10,8 @@ import VerifyOTP from "./pages/VerifyOTP";
 import ResetPassword from "./pages/ResetPassword";
 import HostelDetails from "./pages/HostelDetails";
 import Favourites from "./pages/Favourites";
+import Hostels from "./pages/Hostels";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -17,30 +19,16 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<ProtectedRoute>   <Dashboard />   </ProtectedRoute>  } />        
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />        
         <Route path="/google-success" element={<GoogleSuccess />} />
-        <Route
-  path="/forgot-password"
-  element={<ForgotPassword />}
-/>
-<Route
-  path="/verify-otp"
-  element={<VerifyOTP />}
-/>
-<Route
-  path="/reset-password"
-  element={<ResetPassword />}
-/>
-
-<Route
-  path="/hostels/:id"
-  element={<HostelDetails />}
-/>
-<Route
-  path="/favorites"
-  element={<Favourites />}
-/>
-
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-otp" element={<VerifyOTP />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        
+        <Route path="/hostels" element={<ProtectedRoute><Hostels /></ProtectedRoute>} />
+        <Route path="/hostels/:id" element={<ProtectedRoute><HostelDetails /></ProtectedRoute>} />
+        <Route path="/favorites" element={<ProtectedRoute><Favourites /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );

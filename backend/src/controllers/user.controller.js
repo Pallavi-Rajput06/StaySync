@@ -314,6 +314,91 @@ console.log(user.favorites);
 };
 
 
+const updateUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const { name, email, avatar, oldPassword, newPassword } = req.body;
+
+    // Update name
+    if (name) user.name = name;
+
+    // Update avatar
+    if (avatar !== undefined) user.avatar = avatar;
+
+    // Handle email and password updates only if provider is local
+    if (email && email !== user.email) {
+      if (user.authProvider === "google") {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot change email for Google OAuth accounts",
+        });
+      }
+
+      const emailExists = await User.findOne({ email });
+      if (emailExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Email is already taken",
+        });
+      }
+      user.email = email;
+    }
+
+    if (newPassword) {
+      if (user.authProvider === "google") {
+        return res.status(400).json({
+          success: false,
+          message: "Cannot change password for Google OAuth accounts",
+        });
+      }
+
+      if (!oldPassword) {
+        return res.status(400).json({
+          success: false,
+          message: "Old password is required to set a new password",
+        });
+      }
+
+      const isMatch = await bcrypt.compare(oldPassword, user.password);
+      if (!isMatch) {
+        return res.status(400).json({
+          success: false,
+          message: "Incorrect old password",
+        });
+      }
+
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile Updated Successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        authProvider: user.authProvider,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 
 module.exports = {
@@ -325,4 +410,5 @@ module.exports = {
   resetPassword,
   toggleFavorite,
   getFavorites,
+  updateUserProfile,
 };

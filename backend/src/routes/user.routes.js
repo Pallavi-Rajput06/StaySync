@@ -9,9 +9,10 @@ const {
   registerUser,
   loginUser,
   getProfile, 
-  forgotPassword
-  ,verifyOTP,
-  resetPassword
+  forgotPassword,
+  verifyOTP,
+  resetPassword,
+  updateUserProfile
 } = require("../controllers/user.controller");
 
 router.post("/register", registerUser);
@@ -89,6 +90,10 @@ router.get(
   getFavorites
 );
 
-
+router.put(
+  "/profile",
+  authMiddleware,
+  updateUserProfile
+);
 
 module.exports = router;

@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import HostelCard from "./HostelCard";
 import useHostels from "../../hooks/useHostels";
 
@@ -45,11 +46,9 @@ function FeaturedHostels({ search, selectedCity }) {
 
         </h2>
 
-        <button className="text-blue-600 font-semibold hover:underline">
-
+        <Link to="/hostels" className="text-blue-600 font-semibold hover:underline">
           View All →
-
-        </button>
+        </Link>
 
       </div>
 

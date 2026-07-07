@@ -1,3 +1,4 @@
+import Navbar from "../components/Navbar";
 import HostelCard from "../components/dashboard/HostelCard";
 import useFavorites from "../hooks/useFavorites";
 import { useSelector } from "react-redux";
@@ -7,9 +8,9 @@ const favorites = useSelector(
   (state) => state.favorites.favorites
 );
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-10">
-
-      <div className="max-w-7xl mx-auto px-8">
+    <div className="min-h-screen bg-[#F8FAFC]">
+      <Navbar />
+      <div className="max-w-7xl mx-auto px-8 py-10">
 
         <h1 className="text-4xl font-bold mb-2">
           My Favorites ❤️

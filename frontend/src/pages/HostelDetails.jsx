@@ -1,3 +1,4 @@
+import Navbar from "../components/Navbar";
 import useHostel from "../hooks/useHostel";
 import ImageGallery from "../components/hostel/ImageGallery";
 import HostelInfo from "../components/hostel/HostelInfo";
@@ -18,9 +19,10 @@ function HostelDetails() {
 
   return (
 
-    <div className="bg-[#F8FAFC] min-h-screen py-10">
+    <div className="bg-[#F8FAFC] min-h-screen">
+      <Navbar />
 
-      <div className="max-w-7xl mx-auto px-8">
+      <div className="max-w-7xl mx-auto px-8 py-10">
 
 	  <button
   onClick={() => navigate(-1)}

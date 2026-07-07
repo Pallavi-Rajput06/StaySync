@@ -19,7 +19,7 @@ const favoritesSlice = createSlice({
 
     removeFavorite: (state, action) => {
       state.favorites = state.favorites.filter(
-        (hostel) => hostel.id !== action.payload
+        (hostel) => hostel._id !== action.payload
       );
     },
 
