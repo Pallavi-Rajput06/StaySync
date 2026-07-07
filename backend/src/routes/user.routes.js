@@ -2,7 +2,8 @@ const express = require("express");
 const passport = require("passport");
 const authMiddleware = require("../middleware/auth.middleware");
 const generateToken = require("../utils/generateToken");
-
+const { toggleFavorite } = require("../controllers/user.controller");
+const { getFavorites } = require("../controllers/user.controller");
 const router = express.Router();
 const {
   registerUser,
@@ -76,6 +77,17 @@ router.get(
   }
 );
 
+router.put(
+  "/favorites/:hostelId",
+  authMiddleware,
+  toggleFavorite
+);
+
+router.get(
+  "/favorites",
+  authMiddleware,
+  getFavorites
+);
 
 
 

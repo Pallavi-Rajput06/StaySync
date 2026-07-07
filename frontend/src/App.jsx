@@ -9,7 +9,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import VerifyOTP from "./pages/VerifyOTP";
 import ResetPassword from "./pages/ResetPassword";
 import HostelDetails from "./pages/HostelDetails";
-
+import Favourites from "./pages/Favourites";
 
 function App() {
   return (
@@ -35,6 +35,10 @@ function App() {
 <Route
   path="/hostels/:id"
   element={<HostelDetails />}
+/>
+<Route
+  path="/favorites"
+  element={<Favourites />}
 />
 
       </Routes>

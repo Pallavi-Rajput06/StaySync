@@ -5,6 +5,7 @@ const generateToken = require("../utils/generateToken");
 const OTP = require("../models/otp.model");
 const otpGenerator = require("otp-generator");
 const transporter = require("../config/mail");
+const Hostel = require("../models/hostel.model");
 
 
 
@@ -253,11 +254,75 @@ const getProfile = async (req, res) => {
 };
 
 
+const toggleFavorite = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+
+    const { hostelId } = req.params;
+
+    const exists = user.favorites.some(
+      (id) => id.toString() === hostelId
+    );
+
+    if (exists) {
+      user.favorites = user.favorites.filter(
+        (id) => id.toString() !== hostelId
+      );
+    } else {
+      user.favorites.push(hostelId);
+    }
+    console.log("USER =>", user);
+    console.log("HOSTEL ID =>", hostelId);
+    await user.save();
+    console.log("AFTER SAVE =>", user.favorites);
+    res.status(200).json({
+
+     
+      success: true,
+      favorites: user.favorites,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const getFavorites = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+  .populate({
+    path: "favorites",
+    model: "Hostel",
+  });
+
+console.log(user.favorites);
+
+    res.status(200).json({
+      success: true,
+      favorites: user.favorites,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+
+
 module.exports = {
   registerUser,
   loginUser,
   getProfile,
   forgotPassword,
   verifyOTP,
-  resetPassword
+  resetPassword,
+  toggleFavorite,
+  getFavorites,
 };

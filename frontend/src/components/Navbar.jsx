@@ -43,13 +43,12 @@ function Navbar() {
 
           </button>
 
-          <button className="flex items-center gap-2 hover:text-blue-400 cursor-pointer">
-
-            <Heart size={20} />
-
-            Favorites
-
-          </button>
+          <Link to="/favorites">
+            <button className="flex items-center gap-2 hover:text-blue-400 cursor-pointer">
+              <Heart size={20} />
+              Favorites
+            </button>
+</Link>
 
           <button className="flex items-center gap-2 hover:text-blue-400 cursor-pointer">
 
@@ -76,6 +75,8 @@ function Navbar() {
             </span>
 
           </div>
+          
+
 
           <button
             onClick={handleLogout}
@@ -87,7 +88,7 @@ function Navbar() {
             Logout
 
           </button>
-
+          
         </div>
 
       </div>

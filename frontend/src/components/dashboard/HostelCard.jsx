@@ -6,10 +6,53 @@ import {
 	BedDouble,
 	BadgeCheck,
   } from "lucide-react";
+  import { useDispatch, useSelector } from "react-redux";
+import {
+  addFavorite,
+  removeFavorite,
+} from "../../redux/slices/favoritesSlice";
+  import API from "../../services/axios";
+  import toast from "react-hot-toast";
+
   import { useNavigate } from "react-router-dom";
   
   function HostelCard({ hostel }) {
 	const navigate = useNavigate();
+
+	const dispatch = useDispatch();
+	const favorites = useSelector(
+		(state) => state.favorites.favorites
+	  );
+	  const favorite = favorites.some(
+		(item) => item._id === hostel._id
+	  );
+	
+	
+	const toggleFavorite = async () => {
+		try {
+	  
+		  await API.put(`/users/favorites/${hostel._id}`);
+	  
+		  if (favorite) {
+	  
+			dispatch(removeFavorite(hostel._id));
+	  
+			toast.success("Removed from Favorites");
+	  
+		  } else {
+	  
+			dispatch(addFavorite(hostel));	  
+			toast.success("Added to Favorites");
+	  
+		  }
+	  
+		} catch (error) {
+	  
+		  console.log(error);
+		  toast.error("Something went wrong");
+	  
+		}
+	  };
 	return (
 	  <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300">
   
@@ -37,11 +80,20 @@ import {
   
 		  {/* Wishlist */}
   
-		  <button className="absolute top-4 right-4 bg-white/80 backdrop-blur-md p-2 rounded-full hover:bg-white cursor-pointer">
-  
-			<Heart size={18} />
-  
-		  </button>
+		  <button
+  onClick={toggleFavorite}
+  className="absolute top-4 right-4 bg-white p-2 rounded-full shadow hover:scale-110 transition"
+>
+
+<Heart
+  size={18}
+  className={
+    favorite
+      ? "fill-red-500 text-red-500"
+      : "text-gray-600"
+  }
+/>
+</button>
   
 		</div>
   
