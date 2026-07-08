@@ -12,6 +12,7 @@ import HostelDetails from "./pages/HostelDetails";
 import Favourites from "./pages/Favourites";
 import Hostels from "./pages/Hostels";
 import Profile from "./pages/Profile";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/hostels/:id" element={<ProtectedRoute><HostelDetails /></ProtectedRoute>} />
         <Route path="/favorites" element={<ProtectedRoute><Favourites /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );
