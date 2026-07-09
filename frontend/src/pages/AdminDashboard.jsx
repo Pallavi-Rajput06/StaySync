@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import API from "../services/axios";
 import toast from "react-hot-toast";
+import { compressImage } from "../utils/imageHelper";
+import { StatsCardSkeleton, TableRowSkeleton } from "../components/SkeletonLoader";
 import {
   DollarSign,
   Home,
@@ -77,7 +79,7 @@ function AdminDashboard() {
   // Access check: restrict dashboard to admins
   useEffect(() => {
     if (!userLoading && user && user.role !== "admin") {
-      navigate("/dashboard");
+      navigate("/unauthorized");
     }
   }, [user, userLoading, navigate]);
 
@@ -140,6 +142,48 @@ function AdminDashboard() {
         : [...current, facility];
       return { ...prev, facilities: updated };
     });
+  };
+
+  const handleHostelFilesChange = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    try {
+      setLoading(true);
+      const compressPromises = files.map((file) => compressImage(file, 1000, 1000, 0.7));
+      const base64Images = await Promise.all(compressPromises);
+      
+      setFormData((prev) => {
+        const existingImages = prev.images
+          ? prev.images.split(/[,\n]/).map((img) => img.trim()).filter(Boolean)
+          : [];
+        const newImagesList = [...existingImages, ...base64Images];
+        return {
+          ...prev,
+          images: newImagesList.join(",\n"),
+        };
+      });
+      toast.success(`Successfully uploaded ${files.length} images from device!`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to compress and upload images from device.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    setFormData((prev) => {
+      const existingImages = prev.images
+        ? prev.images.split(/[,\n]/).map((img) => img.trim()).filter(Boolean)
+        : [];
+      const updatedImages = existingImages.filter((_, idx) => idx !== indexToRemove);
+      return {
+        ...prev,
+        images: updatedImages.join(",\n"),
+      };
+    });
+    toast.success("Image removed.");
   };
 
   // Submit Add Hostel
@@ -325,51 +369,60 @@ function AdminDashboard() {
 
             {/* Stats Cards Grid */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              
-              {/* Card 1: Total */}
-              <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex items-center gap-5 hover:translate-y-[-2px] transition duration-300">
-                <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
-                  <Home size={28} />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-400">Total Hostels</p>
-                  <h3 className="text-3xl font-extrabold text-gray-800 mt-1">{totalHostelsCount}</h3>
-                </div>
-              </div>
+              {loading ? (
+                <>
+                  <StatsCardSkeleton />
+                  <StatsCardSkeleton />
+                  <StatsCardSkeleton />
+                  <StatsCardSkeleton />
+                </>
+              ) : (
+                <>
+                  {/* Card 1: Total */}
+                  <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex items-center gap-5 hover:translate-y-[-2px] transition duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
+                      <Home size={28} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-400">Total Hostels</p>
+                      <h3 className="text-3xl font-extrabold text-gray-800 mt-1">{totalHostelsCount}</h3>
+                    </div>
+                  </div>
 
-              {/* Card 2: Available */}
-              <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex items-center gap-5 hover:translate-y-[-2px] transition duration-300">
-                <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600">
-                  <Clock size={28} />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-400">Available Hostels</p>
-                  <h3 className="text-3xl font-extrabold text-gray-800 mt-1">{availableHostelsCount}</h3>
-                </div>
-              </div>
+                  {/* Card 2: Available */}
+                  <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex items-center gap-5 hover:translate-y-[-2px] transition duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600">
+                      <Clock size={28} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-400">Available Hostels</p>
+                      <h3 className="text-3xl font-extrabold text-gray-800 mt-1">{availableHostelsCount}</h3>
+                    </div>
+                  </div>
 
-              {/* Card 3: Verified */}
-              <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex items-center gap-5 hover:translate-y-[-2px] transition duration-300">
-                <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                  <CheckCircle size={28} />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-400">Verified Hostels</p>
-                  <h3 className="text-3xl font-extrabold text-gray-800 mt-1">{verifiedHostelsCount}</h3>
-                </div>
-              </div>
+                  {/* Card 3: Verified */}
+                  <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex items-center gap-5 hover:translate-y-[-2px] transition duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+                      <CheckCircle size={28} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-400">Verified Hostels</p>
+                      <h3 className="text-3xl font-extrabold text-gray-800 mt-1">{verifiedHostelsCount}</h3>
+                    </div>
+                  </div>
 
-              {/* Card 4: Monthly Revenue */}
-              <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex items-center gap-5 hover:translate-y-[-2px] transition duration-300">
-                <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
-                  <DollarSign size={28} />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-400">Est. Monthly Income</p>
-                  <h3 className="text-3xl font-extrabold text-gray-800 mt-1">₹{monthlyRevenue.toLocaleString()}</h3>
-                </div>
-              </div>
-
+                  {/* Card 4: Monthly Revenue */}
+                  <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex items-center gap-5 hover:translate-y-[-2px] transition duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600">
+                      <DollarSign size={28} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-400">Est. Monthly Income</p>
+                      <h3 className="text-3xl font-extrabold text-gray-800 mt-1">₹{monthlyRevenue.toLocaleString()}</h3>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Quick Actions & Overview Lists */}
@@ -457,9 +510,26 @@ function AdminDashboard() {
 
             {/* Hostels Grid/Table */}
             {loading ? (
-              <div className="bg-white rounded-3xl shadow-md p-20 text-center flex flex-col items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-500 mb-4"></div>
-                <p className="text-gray-500">Retrieving listings...</p>
+              <div className="bg-white rounded-3xl shadow-md overflow-hidden border border-gray-100">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 border-b border-gray-100 text-gray-400 font-semibold text-xs tracking-wider uppercase">
+                        <th className="py-4 px-6">Hostel Details</th>
+                        <th className="py-4 px-6">Location</th>
+                        <th className="py-4 px-6">Rent</th>
+                        <th className="py-4 px-6">Config</th>
+                        <th className="py-4 px-6">Status</th>
+                        <th className="py-4 px-6 text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 text-gray-700">
+                      {[1, 2, 3].map((n) => (
+                        <TableRowSkeleton key={n} />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             ) : filteredHostels.length === 0 ? (
               <div className="bg-white rounded-3xl shadow-md p-20 text-center border border-gray-100">
@@ -818,17 +888,72 @@ function AdminDashboard() {
                   </div>
 
                   {/* Image list */}
-                  <div>
-                    <label className="block text-gray-700 font-semibold mb-2">Hostel Image URLs</label>
+                  <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                      <label className="block text-gray-700 font-semibold">Hostel Image URLs & Uploads</label>
+                      
+                      <div>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleHostelFilesChange}
+                          className="hidden"
+                          id="hostel-file-picker"
+                        />
+                        <label
+                          htmlFor="hostel-file-picker"
+                          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2.5 rounded-xl cursor-pointer text-xs transition shadow-md shadow-blue-500/10 hover:shadow-blue-500/25"
+                        >
+                          Choose from Device
+                        </label>
+                      </div>
+                    </div>
+                    
                     <textarea
                       name="images"
                       value={formData.images}
                       onChange={handleInputChange}
                       required
                       rows={3}
-                      placeholder="Paste image links here (either comma-separated, or one link per line)"
+                      placeholder="Paste image links here (either comma-separated, or one link per line) or choose files from device"
                       className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none focus:bg-white focus:border-blue-500 text-gray-800 transition text-xs font-mono"
                     />
+
+                    {/* Thumbnail Preview Grid */}
+                    {formData.images && (
+                      <div className="space-y-2">
+                        <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Images Preview</label>
+                        <div className="grid grid-cols-3 sm:grid-cols-5 md:grid-cols-6 gap-3">
+                          {formData.images
+                            .split(/[,\n]/)
+                            .map((img) => img.trim())
+                            .filter(Boolean)
+                            .map((url, idx) => (
+                              <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm group">
+                                <img
+                                  src={url}
+                                  alt={`Hostel Preview ${idx + 1}`}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.target.src = "https://www.svgrepo.com/show/508682/home.svg";
+                                  }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemoveImage(idx)}
+                                  className="absolute top-1.5 right-1.5 bg-red-500 hover:bg-red-600 text-white p-1 rounded-full shadow transition opacity-90 hover:scale-105 cursor-pointer flex items-center justify-center"
+                                  title="Remove Image"
+                                >
+                                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

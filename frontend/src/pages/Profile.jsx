@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import API from "../services/axios";
 import { setUser } from "../redux/slices/userSlice";
 import { Camera, Lock, Mail, User, ShieldAlert, CheckCircle } from "lucide-react";
+import { compressImage } from "../utils/imageHelper";
 
 function Profile() {
   const dispatch = useDispatch();
@@ -38,6 +40,23 @@ function Profile() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const compressedBase64 = await compressImage(file);
+        setFormData((prev) => ({
+          ...prev,
+          avatar: compressedBase64,
+        }));
+        toast.success("Image uploaded successfully from device!");
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to process image file.");
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -105,10 +124,11 @@ function Profile() {
   };
 
   return (
-    <div className="bg-[#F8FAFC] min-h-screen">
-      <Navbar />
+    <div className="bg-[#F8FAFC] min-h-screen flex flex-col justify-between">
+      <div>
+        <Navbar />
 
-      <div className="max-w-4xl mx-auto px-8 py-12">
+        <div className="max-w-4xl mx-auto px-8 py-12">
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
           
           {/* Header Banner */}
@@ -216,19 +236,36 @@ function Profile() {
                         )}
                       </div>
                       
-                      <div className="relative w-full">
-                        <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
-                          <Camera size={20} />
-                        </span>
-                        <input
-                          id="avatar"
-                          name="avatar"
-                          type="text"
-                          value={formData.avatar}
-                          onChange={handleChange}
-                          placeholder="Paste a direct link to an image"
-                          className="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:border-blue-500 outline-none transition text-gray-800 text-sm"
-                        />
+                      <div className="flex flex-col sm:flex-row gap-4 w-full">
+                        <div className="relative flex-1">
+                          <span className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400">
+                            <Camera size={20} />
+                          </span>
+                          <input
+                            id="avatar"
+                            name="avatar"
+                            type="text"
+                            value={formData.avatar}
+                            onChange={handleChange}
+                            placeholder="Paste a direct link to an image"
+                            className="w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:bg-white focus:border-blue-500 outline-none transition text-gray-800 text-sm"
+                          />
+                        </div>
+                        <div className="shrink-0 flex items-center">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="hidden"
+                            id="avatar-file-upload"
+                          />
+                          <label
+                            htmlFor="avatar-file-upload"
+                            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 rounded-xl cursor-pointer text-sm transition shadow-md shadow-blue-500/10 hover:shadow-blue-500/25 flex items-center gap-2"
+                          >
+                            Choose File
+                          </label>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -325,6 +362,8 @@ function Profile() {
 
         </div>
       </div>
+      </div>
+      <Footer />
     </div>
   );
 }

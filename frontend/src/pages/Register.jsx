@@ -19,6 +19,7 @@ const [formData, setFormData] = useState({
   email: "",
   password: "",
   confirmPassword: "",
+  role: "student",
 });
 
 const handleChange = (e) => {
@@ -50,6 +51,7 @@ const handleSubmit = async (e) => {
       name: formData.name,
       email: formData.email,
       password: formData.password,
+      role: formData.role,
     });
 
     localStorage.setItem("token", response.data.token);
@@ -148,6 +150,32 @@ navigate("/dashboard");
 
 
 					<form className="mt-12" onSubmit={handleSubmit}>
+
+            {/* Role Selection Toggle */}
+            <div className="flex gap-4 mb-8">
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, role: "student" })}
+                className={`flex-1 py-3.5 rounded-xl font-bold border text-sm transition-all duration-300 cursor-pointer ${
+                  formData.role === "student"
+                    ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/20"
+                    : "bg-transparent border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white"
+                }`}
+              >
+                Join as Student
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData({ ...formData, role: "admin" })}
+                className={`flex-1 py-3.5 rounded-xl font-bold border text-sm transition-all duration-300 cursor-pointer ${
+                  formData.role === "admin"
+                    ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/20"
+                    : "bg-transparent border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white"
+                }`}
+              >
+                Join as Hostel Owner
+              </button>
+            </div>
 
 {/* Name */}
 

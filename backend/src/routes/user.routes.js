@@ -66,15 +66,12 @@ router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     session: false,
-    failureRedirect: "http://localhost:5173",
+    failureRedirect: process.env.FRONTEND_URL || "http://localhost:5173",
   }),
   (req, res) => {
-
     const token = generateToken(req.user._id);
-
-    res.redirect(
-      `http://localhost:5173/google-success?token=${token}`
-    );
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    res.redirect(`${frontendUrl}/google-success?token=${token}`);
   }
 );
 

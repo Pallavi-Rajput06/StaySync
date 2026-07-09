@@ -1,9 +1,11 @@
 import { useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import useHostels from "../hooks/useHostels";
 import HostelCard from "../components/dashboard/HostelCard";
 import { Search, FilterX, ShieldCheck, ArrowUpDown, SlidersHorizontal, X } from "lucide-react";
+import { HostelCardSkeleton } from "../components/SkeletonLoader";
 
 const AMENITY_OPTIONS = [
   "WiFi",
@@ -156,10 +158,11 @@ function Hostels() {
   }, [hostels, search, city, gender, roomType, minRent, maxRent, verifiedOnly, selectedAmenities, sortBy]);
 
   return (
-    <div className="bg-[#F8FAFC] min-h-screen">
-      <Navbar />
+    <div className="bg-[#F8FAFC] min-h-screen flex flex-col justify-between">
+      <div>
+        <Navbar />
 
-      <div className="max-w-[1450px] mx-auto px-8 py-10">
+        <div className="max-w-[1450px] mx-auto px-8 py-10">
         
         {/* Search & Top Action Bar */}
         <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100 flex flex-col md:flex-row gap-4 items-center justify-between mb-8">
@@ -368,9 +371,10 @@ function Hostels() {
             </div>
 
             {loading ? (
-              <div className="bg-white rounded-3xl shadow-md p-20 text-center flex flex-col items-center justify-center border border-gray-100">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-500 mb-4"></div>
-                <p className="text-gray-500 font-medium">Searching hostels...</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[1, 2, 3, 4, 5, 6].map((n) => (
+                  <HostelCardSkeleton key={n} />
+                ))}
               </div>
             ) : filteredAndSortedHostels.length === 0 ? (
               <div className="bg-white rounded-3xl shadow-md p-20 text-center border border-gray-100">
@@ -401,6 +405,8 @@ function Hostels() {
         </div>
 
       </div>
+      </div>
+      <Footer />
     </div>
   );
 }

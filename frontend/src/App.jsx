@@ -13,6 +13,8 @@ import Favourites from "./pages/Favourites";
 import Hostels from "./pages/Hostels";
 import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
+import NotFound from "./pages/NotFound";
+import Unauthorized from "./pages/Unauthorized";
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
         <Route path="/favorites" element={<ProtectedRoute><Favourites /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

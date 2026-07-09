@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+import Footer from "../components/Footer";
+
 function Dashboard() {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.user);
@@ -28,15 +30,17 @@ function Dashboard() {
         setSearch={setSearch}
       />
 
-<CitySection
-  selectedCity={selectedCity}
-  setSelectedCity={setSelectedCity}
-/>
-<FeaturedHostels
-  search={search}
-  selectedCity={selectedCity}
-/>
+      <CitySection
+        selectedCity={selectedCity}
+        setSelectedCity={setSelectedCity}
+      />
+      
+      <FeaturedHostels
+        search={search}
+        selectedCity={selectedCity}
+      />
 
+      <Footer />
     </div>
   );
 }

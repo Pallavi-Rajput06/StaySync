@@ -6,44 +6,52 @@ import toast from "react-hot-toast";
 
 
 function Login() {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [role, setRole] = useState("student"); // "student" or "admin"
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
-	const [formData, setFormData] = useState({
-		email: "",
-		password: "",
-	  });
-	  const [showPassword, setShowPassword] = useState(false);
-	  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!formData.email || !formData.password) {
+      return toast.error("Please fill all fields");
+    }
+    try {
+      setLoading(true);
+      const response = await API.post("/users/login", formData);
 
-	  const [loading, setLoading] = useState(false);
-	  const handleChange = (e) => {
-		setFormData({
-		  ...formData,
-		  [e.target.name]: e.target.value,
-		});
-	  };
-	  const handleSubmit = async (e) => {
-		e.preventDefault();
-		if (!formData.email || !formData.password) {
-			return toast.error("Please fill all fields");
-		  }
-		try {
-		  setLoading(true);
-		  console.log(formData);
-		  const response = await API.post("/users/login", formData);
-	  
-		  localStorage.setItem("token", response.data.token);
-	  
-		  toast.success(response.data.message);
-	  
-		  navigate("/dashboard");
-		} catch (error) {
-		  toast.error(
-			error.response?.data?.message || "Login Failed"
-		  );
-		} finally {
-		  setLoading(false);
-		}
-	  };
+      // Role check validation
+      if (response.data.user.role !== role) {
+        if (role === "admin") {
+          return toast.error("This account is not registered as a Hostel Owner / Admin.");
+        } else {
+          return toast.error("This account is an Administrator. Please log in using the Owner tab.");
+        }
+      }
+
+      localStorage.setItem("token", response.data.token);
+
+      toast.success(response.data.message);
+
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Login Failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 	return (
 		<div className="min-h-screen bg-[#0F172A] flex">
 
@@ -130,7 +138,32 @@ function Login() {
   className="mt-12"
   onSubmit={handleSubmit}
 > 
-						{/* Email */} 
+
+            {/* Role Selection Toggle */}
+            <div className="flex gap-4 mb-8">
+              <button
+                type="button"
+                onClick={() => setRole("student")}
+                className={`flex-1 py-3.5 rounded-xl font-bold border text-sm transition-all duration-300 cursor-pointer ${
+                  role === "student"
+                    ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/20"
+                    : "bg-transparent border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white"
+                }`}
+              >
+                Login as Student
+              </button>
+              <button
+                type="button"
+                onClick={() => setRole("admin")}
+                className={`flex-1 py-3.5 rounded-xl font-bold border text-sm transition-all duration-300 cursor-pointer ${
+                  role === "admin"
+                    ? "bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/20"
+                    : "bg-transparent border-gray-700 text-gray-400 hover:border-gray-500 hover:text-white"
+                }`}
+              >
+                Login as Owner
+              </button>
+            </div> 
 						<div> 
 							<label htmlFor="email" className="block text-white mb-3" > Email Address </label>
 							<input
