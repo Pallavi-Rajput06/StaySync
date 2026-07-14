@@ -7,7 +7,7 @@ const getApiBaseURL = () => {
     return configuredUrl;
   }
 
-  return import.meta.env.DEV ? "/api" : "https://staynest-backend.onrender.com/api";
+  return import.meta.env.DEV ? "/api" : "https://stay-sync-gamma.vercel.app/api";
 };
 
 const API = axios.create({
