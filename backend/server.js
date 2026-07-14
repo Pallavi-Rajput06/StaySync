@@ -126,8 +126,12 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
-const allowedOrigins = FRONTEND_URL.split(",").map((origin) => origin.trim());
+const FRONTEND_URL =
+  process.env.FRONTEND_URL ||
+  (process.env.NODE_ENV === "production"
+    ? "https://staynst.netlify.app"
+    : "http://localhost:5173");
+const allowedOrigins = FRONTEND_URL.split(",").map((origin) => origin.trim()).filter(Boolean);
 app.use(
   cors({
     origin: allowedOrigins,

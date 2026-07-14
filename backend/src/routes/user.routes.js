@@ -70,11 +70,20 @@ router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     session: false,
-    failureRedirect: process.env.FRONTEND_URL || "http://localhost:5173",
+    failureRedirect:
+      process.env.FRONTEND_URL ||
+      (process.env.NODE_ENV === "production"
+        ? "https://staynst.netlify.app"
+        : "http://localhost:5173"),
   }),
   (req, res) => {
     const token = generateToken(req.user._id);
-    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const frontendUrl = (
+      process.env.FRONTEND_URL ||
+      (process.env.NODE_ENV === "production"
+        ? "https://staynst.netlify.app"
+        : "http://localhost:5173")
+    ).replace(/\/$/, "");
     res.redirect(`${frontendUrl}/google-success?token=${token}`);
   }
 );

@@ -11,7 +11,9 @@ passport.use(
 
       callbackURL:
         process.env.GOOGLE_CALLBACK_URL ||
-        "http://localhost:5000/api/users/auth/google/callback",
+        (process.env.NODE_ENV === "production"
+          ? "https://stay-sync-gamma.vercel.app/api/users/auth/google/callback"
+          : "http://localhost:5000/api/users/auth/google/callback"),
     },
 
     async (
