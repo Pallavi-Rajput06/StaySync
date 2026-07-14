@@ -129,13 +129,28 @@ app.use(passport.session());
 const FRONTEND_URL =
   process.env.FRONTEND_URL ||
   (process.env.NODE_ENV === "production"
-    ? "https://staynst.netlify.app"
+    ? "https://staynst.netlify.app,http://localhost:5173"
     : "http://localhost:5173");
 const allowedOrigins = FRONTEND_URL.split(",").map((origin) => origin.trim()).filter(Boolean);
+
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+
+      const isAllowed = allowedOrigins.includes(origin) || origin.endsWith(".netlify.app") || origin.endsWith(".vercel.app");
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 

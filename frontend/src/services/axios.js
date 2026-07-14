@@ -1,11 +1,13 @@
 import axios from "axios";
 
 const getApiBaseURL = () => {
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
+  const configuredUrl = import.meta.env.VITE_API_URL?.trim();
+
+  if (configuredUrl) {
+    return configuredUrl;
   }
 
-  return import.meta.env.DEV ? "/api" : "http://localhost:5000/api";
+  return import.meta.env.DEV ? "/api" : "https://staynest-backend.onrender.com/api";
 };
 
 const API = axios.create({

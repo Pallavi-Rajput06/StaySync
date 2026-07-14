@@ -265,7 +265,7 @@ function Login() {
   type="button"
   onClick={() => {
     sessionStorage.setItem("redirectBackTo", redirectBackTo);
-    const apiBaseUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "/api" : "http://localhost:5000/api");
+    const apiBaseUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "/api" : "https://staynest-backend.onrender.com/api");
     window.location.href = `${apiBaseUrl}/users/auth/google`;
   }}
   
