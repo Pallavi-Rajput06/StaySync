@@ -38,7 +38,7 @@ function CitySection({
     <section className="max-w-7xl mx-auto px-8 py-16">
 
       <h2 className="text-4xl font-bold mb-10">
-        Browse by City
+        Browse By City
       </h2>
 
       <div className="grid grid-cols-4 gap-6">
