@@ -324,7 +324,8 @@ className="w-full h-14 mt-8 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg
   type="button"
   onClick={() => {
     sessionStorage.setItem("redirectBackTo", redirectBackTo);
-    window.location.href = `${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/users/auth/google`;
+    const apiBaseUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? "/api" : "http://localhost:5000/api");
+    window.location.href = `${apiBaseUrl}/users/auth/google`;
   }}
   className="w-full h-14 border border-gray-700 rounded-xl bg-[#1F2937] hover:bg-[#293548] flex items-center justify-center gap-3 text-white cursor-pointer"
 >
