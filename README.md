@@ -4,7 +4,7 @@ StayNest is a production-ready, full-stack web application built on the MERN sta
 
 ---
 
-## 🚀 Key Features
+##  Key Features
 
 *  Public Discovery & Search: Guests can search properties, apply advanced filters (price range, gender preference, facilities), and read city relocation guides without forced signups.
 *  Redirect-Back Auth Interception: Guest actions (saving favorites or writing reviews) are intercepted and redirected to the login flow, returning the user back to their original route upon successful login.
@@ -14,7 +14,7 @@ StayNest is a production-ready, full-stack web application built on the MERN sta
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 *   **Frontend**: React.js (Vite), Redux Toolkit, Tailwind CSS, Axios, Lucide React
 *   **Backend**: Node.js, Express.js, Passport.js (Google OAuth 2.0), JSON Web Tokens (JWT), Nodemailer
