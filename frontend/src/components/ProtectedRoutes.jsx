@@ -26,7 +26,13 @@ function ProtectedRoute({ children }) {
   }, [token, user, loading, dispatch]);
 
   if (!token) {
-    return <Navigate to="/" replace />;
+    return (
+      <Navigate
+        to="/login"
+        state={{ from: window.location.pathname, message: "Please login to continue." }}
+        replace
+      />
+    );
   }
 
   if (loading || (token && !user)) {

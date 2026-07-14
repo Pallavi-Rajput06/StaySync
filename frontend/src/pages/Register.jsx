@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import API from "../services/axios";
 
@@ -7,6 +7,15 @@ import API from "../services/axios";
 
 function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectBackTo = location.state?.from || "/";
+  const message = location.state?.message;
+
+  useEffect(() => {
+    if (message) {
+      toast.error(message, { id: "auth-message" });
+    }
+  }, [message]);
 
 const [loading, setLoading] = useState(false);
 
@@ -56,9 +65,9 @@ const handleSubmit = async (e) => {
 
     localStorage.setItem("token", response.data.token);
 
-toast.success(response.data.message);
+    toast.success(response.data.message);
 
-navigate("/dashboard");
+    navigate(redirectBackTo);
   } catch (error) {
     toast.error(
       error.response?.data?.message || "Registration Failed"
@@ -314,8 +323,8 @@ className="w-full h-14 mt-8 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg
 <button
   type="button"
   onClick={() => {
-    console.log("Google Clicked");
-    window.location.href = "http://localhost:5000/api/users/auth/google";
+    sessionStorage.setItem("redirectBackTo", redirectBackTo);
+    window.location.href = `${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/users/auth/google`;
   }}
   className="w-full h-14 border border-gray-700 rounded-xl bg-[#1F2937] hover:bg-[#293548] flex items-center justify-center gap-3 text-white cursor-pointer"
 >

@@ -12,8 +12,12 @@ const {
   forgotPassword,
   verifyOTP,
   resetPassword,
-  updateUserProfile
+  updateUserProfile,
+  getAllUsers,
+  updateUserRole,
+  deleteUser
 } = require("../controllers/user.controller");
+const { adminOnly } = authMiddleware;
 
 router.post("/register", registerUser);
 
@@ -92,5 +96,10 @@ router.put(
   authMiddleware,
   updateUserProfile
 );
+
+// Admin-only user management routes
+router.get("/", authMiddleware, adminOnly, getAllUsers);
+router.put("/:id/role", authMiddleware, adminOnly, updateUserRole);
+router.delete("/:id", authMiddleware, adminOnly, deleteUser);
 
 module.exports = router;

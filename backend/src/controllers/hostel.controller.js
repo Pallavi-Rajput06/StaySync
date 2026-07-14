@@ -134,14 +134,15 @@ const updateHostel = async (req, res) => {
       });
     }
 
-    // Check ownership
+    // Check ownership or admin privileges
     const user = await User.findById(req.user.id);
-    const isOwner =
+    const isAuthorized =
+      user.role === "admin" ||
       (hostel.owner && hostel.owner.toString() === req.user.id) ||
       (hostel.ownerEmail &&
         hostel.ownerEmail.toLowerCase() === user.email.toLowerCase());
 
-    if (!isOwner) {
+    if (!isAuthorized) {
       return res.status(403).json({
         success: false,
         message: "Not authorized to update this hostel",
@@ -215,14 +216,15 @@ const deleteHostel = async (req, res) => {
       });
     }
 
-    // Check ownership
+    // Check ownership or admin privileges
     const user = await User.findById(req.user.id);
-    const isOwner =
+    const isAuthorized =
+      user.role === "admin" ||
       (hostel.owner && hostel.owner.toString() === req.user.id) ||
       (hostel.ownerEmail &&
         hostel.ownerEmail.toLowerCase() === user.email.toLowerCase());
 
-    if (!isOwner) {
+    if (!isAuthorized) {
       return res.status(403).json({
         success: false,
         message: "Not authorized to delete this hostel",
@@ -243,6 +245,30 @@ const deleteHostel = async (req, res) => {
   }
 };
 
+const toggleVerifyHostel = async (req, res) => {
+  try {
+    const hostel = await Hostel.findById(req.params.id);
+    if (!hostel) {
+      return res.status(404).json({
+        success: false,
+        message: "Hostel not found",
+      });
+    }
+    hostel.verified = !hostel.verified;
+    await hostel.save();
+    res.status(200).json({
+      success: true,
+      message: `Hostel verification status updated to ${hostel.verified}`,
+      hostel,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createHostel,
   getMyHostels,
@@ -250,4 +276,5 @@ module.exports = {
   getSingleHostel,
   updateHostel,
   deleteHostel,
+  toggleVerifyHostel,
 };

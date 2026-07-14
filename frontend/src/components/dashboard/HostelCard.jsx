@@ -29,8 +29,13 @@ import {
 	
 	
 	const toggleFavorite = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Please login to continue saving favorites.", { id: "auth-favorite" });
+      navigate("/login", { state: { from: window.location.pathname, message: "Please login to continue." } });
+      return;
+    }
 		try {
-	  
 		  await API.put(`/users/favorites/${hostel._id}`);
 	  
 		  if (favorite) {

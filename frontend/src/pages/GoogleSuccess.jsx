@@ -13,10 +13,11 @@ function GoogleSuccess() {
 
     if (token) {
       localStorage.setItem("token", token);
-
-      window.location.replace("/dashboard");
+      const redirectBackTo = sessionStorage.getItem("redirectBackTo") || "/";
+      sessionStorage.removeItem("redirectBackTo");
+      window.location.replace(redirectBackTo);
     } else {
-      window.location.replace("/");
+      window.location.replace("/login");
     }
   }, []);
 

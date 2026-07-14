@@ -107,7 +107,15 @@ const hostelSchema = new mongoose.Schema(
       ref: "User",
       default: null,
     },
-   
+    popularity: {
+      type: Number,
+      default: 0,
+    },
+    category: {
+      type: String,
+      enum: ["PG", "Hostel", "Flat", "Shared Room"],
+      default: "Hostel",
+    },
   },
   {
     timestamps: true,

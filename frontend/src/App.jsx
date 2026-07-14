@@ -15,21 +15,24 @@ import Profile from "./pages/Profile";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import Unauthorized from "./pages/Unauthorized";
+import CityGuide from "./pages/CityGuide";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />        
         <Route path="/google-success" element={<GoogleSuccess />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         
-        <Route path="/hostels" element={<ProtectedRoute><Hostels /></ProtectedRoute>} />
-        <Route path="/hostels/:id" element={<ProtectedRoute><HostelDetails /></ProtectedRoute>} />
+        <Route path="/hostels" element={<Hostels />} />
+        <Route path="/hostels/:id" element={<HostelDetails />} />
+        <Route path="/city-guide" element={<CityGuide />} />
         <Route path="/favorites" element={<ProtectedRoute><Favourites /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

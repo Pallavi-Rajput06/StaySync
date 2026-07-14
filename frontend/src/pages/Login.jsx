@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import API from "../services/axios";
 import toast from "react-hot-toast";
 
@@ -13,6 +13,16 @@ function Login() {
   const [role, setRole] = useState("student"); // "student" or "admin"
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectBackTo = location.state?.from || "/";
+  const message = location.state?.message;
+
+  useEffect(() => {
+    if (message) {
+      toast.error(message, { id: "auth-message" });
+    }
+  }, [message]);
 
   const [loading, setLoading] = useState(false);
   const handleChange = (e) => {
@@ -43,7 +53,7 @@ function Login() {
 
       toast.success(response.data.message);
 
-      navigate("/dashboard");
+      navigate(redirectBackTo);
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Login Failed"
@@ -254,8 +264,9 @@ function Login() {
 <button
   type="button"
   onClick={() => {
+    sessionStorage.setItem("redirectBackTo", redirectBackTo);
     window.location.href =
-      "http://localhost:5000/api/users/auth/google";
+      `${import.meta.env.VITE_API_URL || "http://localhost:5000/api"}/users/auth/google`;
   }}
   
 className="w-full h-14 border border-gray-700 rounded-xl bg-[#1F2937] hover:bg-[#293548] transition-all duration-300 flex items-center justify-center gap-3 text-white font-medium cursor-pointer"

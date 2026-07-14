@@ -76,6 +76,124 @@ function AdminDashboard() {
 
   const [editingHostelId, setEditingHostelId] = useState(null);
 
+  // Admin platform moderation states
+  const [allUsers, setAllUsers] = useState([]);
+  const [allListings, setAllListings] = useState([]);
+  const [allReviews, setAllReviews] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [listingsLoading, setListingsLoading] = useState(false);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+
+  const fetchAllUsers = async () => {
+    try {
+      setUsersLoading(true);
+      const response = await API.get("/users");
+      setAllUsers(response.data.users || []);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load users list.");
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  const fetchAllListings = async () => {
+    try {
+      setListingsLoading(true);
+      const response = await API.get("/hostels");
+      setAllListings(response.data.hostels || []);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load platform listings.");
+    } finally {
+      setListingsLoading(false);
+    }
+  };
+
+  const fetchAllReviews = async () => {
+    try {
+      setReviewsLoading(true);
+      const response = await API.get("/reviews");
+      setAllReviews(response.data.reviews || []);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load reviews.");
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (user && user.role === "admin") {
+      if (activeTab === "users-management") {
+        fetchAllUsers();
+      } else if (activeTab === "listings-management") {
+        fetchAllListings();
+      } else if (activeTab === "reviews-moderation") {
+        fetchAllReviews();
+      }
+    }
+  }, [activeTab, user]);
+
+  const handleToggleUserRole = async (userId, currentRole) => {
+    try {
+      const nextRole = currentRole === "admin" ? "student" : "admin";
+      await API.put(`/users/${userId}/role`, { role: nextRole });
+      toast.success("User role updated successfully!");
+      fetchAllUsers();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update user role.");
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    try {
+      await API.delete(`/users/${userId}`);
+      toast.success("User deleted successfully!");
+      fetchAllUsers();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete user.");
+    }
+  };
+
+  const handleToggleVerifyHostel = async (hostelId) => {
+    try {
+      await API.put(`/hostels/${hostelId}/verify`);
+      toast.success("Listing verification updated!");
+      fetchAllListings();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to toggle verification.");
+    }
+  };
+
+  const handleDeleteListingAdmin = async (hostelId) => {
+    if (!window.confirm("Are you sure you want to delete this listing?")) return;
+    try {
+      await API.delete(`/hostels/${hostelId}`);
+      toast.success("Listing deleted successfully!");
+      fetchAllListings();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete listing.");
+    }
+  };
+
+  const handleDeleteReviewAdmin = async (reviewId) => {
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
+    try {
+      await API.delete(`/reviews/${reviewId}`);
+      toast.success("Review deleted successfully!");
+      fetchAllReviews();
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to moderate review.");
+    }
+  };
+
   // Access check: restrict dashboard to admins
   useEffect(() => {
     if (!userLoading && user && user.role !== "admin") {
@@ -1062,6 +1180,240 @@ function AdminDashboard() {
 
             </form>
 
+          </div>
+        )}
+
+        {/* VIEW 6: USER MANAGEMENT TAB */}
+        {activeTab === "users-management" && (
+          <div className="space-y-8 animate-fade-in">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-800">User Management</h1>
+              <p className="text-gray-500 mt-2">Manage all registered students and administrators on the platform.</p>
+            </div>
+
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-md overflow-hidden">
+              {usersLoading ? (
+                <div className="p-8 text-center text-gray-400">Retrieving system users...</div>
+              ) : allUsers.length === 0 ? (
+                <div className="p-16 text-center text-gray-400">No users found.</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                        <th className="px-8 py-5">Name</th>
+                        <th className="px-8 py-5">Email</th>
+                        <th className="px-8 py-5">Role</th>
+                        <th className="px-8 py-5">Created At</th>
+                        <th className="px-8 py-5 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 text-sm text-gray-700">
+                      {allUsers.map((u) => (
+                        <tr key={u._id} className="hover:bg-gray-50/50 transition">
+                          <td className="px-8 py-5 font-semibold text-gray-800 flex items-center gap-3">
+                            {u.avatar ? (
+                              <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover border border-gray-200" />
+                            ) : (
+                              <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center font-bold text-xs uppercase">
+                                {u.name.charAt(0)}
+                              </div>
+                            )}
+                            {u.name}
+                          </td>
+                          <td className="px-8 py-5 text-gray-500">{u.email}</td>
+                          <td className="px-8 py-5">
+                            <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${
+                              u.role === "admin"
+                                ? "bg-purple-100 text-purple-700"
+                                : "bg-blue-100 text-blue-700"
+                            }`}>
+                              {u.role}
+                            </span>
+                          </td>
+                          <td className="px-8 py-5 text-gray-400">
+                            {new Date(u.createdAt).toLocaleDateString("en-IN")}
+                          </td>
+                          <td className="px-8 py-5 text-right space-x-2">
+                            <button
+                              onClick={() => handleToggleUserRole(u._id, u.role)}
+                              className="text-xs font-bold text-blue-600 hover:text-blue-800 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-lg transition cursor-pointer"
+                            >
+                              Toggle Role
+                            </button>
+                            {u._id !== user._id && (
+                              <button
+                                onClick={() => handleDeleteUser(u._id)}
+                                className="text-xs font-bold text-red-600 hover:text-red-800 px-3 py-1.5 bg-red-50 hover:bg-red-100 rounded-lg transition cursor-pointer"
+                              >
+                                Delete
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 7: LISTINGS VERIFICATION & MANAGEMENT TAB */}
+        {activeTab === "listings-management" && (
+          <div className="space-y-8 animate-fade-in">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-800">Platform Listings</h1>
+              <p className="text-gray-500 mt-2">Moderate PG/Hostel provider listings and handle verification status badges.</p>
+            </div>
+
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-md overflow-hidden">
+              {listingsLoading ? (
+                <div className="p-8 text-center text-gray-400">Retrieving system listings...</div>
+              ) : allListings.length === 0 ? (
+                <div className="p-16 text-center text-gray-400">No listings found.</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                        <th className="px-8 py-5">Property Name</th>
+                        <th className="px-8 py-5">Location</th>
+                        <th className="px-8 py-5">Rent</th>
+                        <th className="px-8 py-5">Verification</th>
+                        <th className="px-8 py-5">Status</th>
+                        <th className="px-8 py-5 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 text-sm text-gray-700">
+                      {allListings.map((h) => (
+                        <tr key={h._id} className="hover:bg-gray-50/50 transition">
+                          <td className="px-8 py-5 font-semibold text-gray-800">{h.hostelName}</td>
+                          <td className="px-8 py-5 text-gray-500">{h.area}, {h.city}</td>
+                          <td className="px-8 py-5 font-bold text-gray-800">₹{h.rent}/mo</td>
+                          <td className="px-8 py-5">
+                            <button
+                              onClick={() => handleToggleVerifyHostel(h._id)}
+                              className={`px-3 py-1 rounded-full text-xs font-bold transition cursor-pointer ${
+                                h.verified
+                                  ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200"
+                                  : "bg-amber-100 text-amber-700 hover:bg-amber-200"
+                              }`}
+                            >
+                              {h.verified ? "Verified ✓" : "Pending Verify"}
+                            </button>
+                          </td>
+                          <td className="px-8 py-5">
+                            <span className={`px-2 py-0.5 rounded text-xs font-bold ${
+                              h.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                            }`}>
+                              {h.available ? "Vacant" : "Full"}
+                            </span>
+                          </td>
+                          <td className="px-8 py-5 text-right space-x-2">
+                            <button
+                              onClick={() => {
+                                setEditingHostelId(h._id);
+                                setFormData({
+                                  hostelName: h.hostelName || "",
+                                  city: h.city || "",
+                                  area: h.area || "",
+                                  address: h.address || "",
+                                  description: h.description || "",
+                                  rent: h.rent || "",
+                                  gender: h.gender || "boys",
+                                  roomType: h.roomType || "Single",
+                                  facilities: h.facilities || [],
+                                  images: h.images?.join(",\n") || "",
+                                  ownerName: h.ownerName || "",
+                                  ownerPhone: h.ownerPhone || "",
+                                  ownerEmail: h.ownerEmail || "",
+                                  latitude: h.location?.latitude || 22.7196,
+                                  longitude: h.location?.longitude || 75.8577,
+                                  available: h.available ?? true,
+                                  verified: h.verified ?? false,
+                                });
+                                setActiveTab("edit-hostel");
+                              }}
+                              className="text-xs font-bold text-blue-600 hover:text-blue-800 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 rounded-lg transition cursor-pointer"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteListingAdmin(h._id)}
+                              className="text-xs font-bold text-red-600 hover:text-red-800 px-3 py-1.5 bg-red-50 hover:bg-red-100 rounded-lg transition cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* VIEW 8: REVIEWS MODERATION TAB */}
+        {activeTab === "reviews-moderation" && (
+          <div className="space-y-8 animate-fade-in">
+            <div>
+              <h1 className="text-4xl font-bold text-gray-800">Review Moderation</h1>
+              <p className="text-gray-500 mt-2">Moderate student reviews and ratings across all registered properties.</p>
+            </div>
+
+            <div className="bg-white rounded-3xl border border-gray-100 shadow-md overflow-hidden">
+              {reviewsLoading ? (
+                <div className="p-8 text-center text-gray-400">Retrieving system reviews...</div>
+              ) : allReviews.length === 0 ? (
+                <div className="p-16 text-center text-gray-400">No reviews found.</div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-100 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                        <th className="px-8 py-5">Student</th>
+                        <th className="px-8 py-5">Hostel Name</th>
+                        <th className="px-8 py-5">Rating</th>
+                        <th className="px-8 py-5">Comment</th>
+                        <th className="px-8 py-5">Created At</th>
+                        <th className="px-8 py-5 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 text-sm text-gray-700">
+                      {allReviews.map((r) => (
+                        <tr key={r._id} className="hover:bg-gray-50/50 transition">
+                          <td className="px-8 py-5 font-semibold text-gray-800">{r.user?.name || "Anonymous"}</td>
+                          <td className="px-8 py-5 text-gray-500">{r.listing?.hostelName || "Removed Hostel"}</td>
+                          <td className="px-8 py-5">
+                            <span className="flex items-center gap-1 font-bold text-amber-500">
+                              {r.rating} ★
+                            </span>
+                          </td>
+                          <td className="px-8 py-5 max-w-xs truncate text-gray-600" title={r.comment}>
+                            {r.comment}
+                          </td>
+                          <td className="px-8 py-5 text-gray-400">
+                            {new Date(r.createdAt).toLocaleDateString("en-IN")}
+                          </td>
+                          <td className="px-8 py-5 text-right">
+                            <button
+                              onClick={() => handleDeleteReviewAdmin(r._id)}
+                              className="text-xs font-bold text-red-600 hover:text-red-800 px-3 py-1.5 bg-red-50 hover:bg-red-100 rounded-lg transition cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

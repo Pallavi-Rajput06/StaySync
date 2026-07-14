@@ -7,6 +7,9 @@ import {
   LogOut,
   UserCircle2,
   Settings,
+  Users,
+  Building,
+  Star,
 } from "lucide-react";
 import { clearUser } from "../redux/slices/userSlice";
 import { setFavorites } from "../redux/slices/favoritesSlice";
@@ -39,6 +42,21 @@ function Sidebar({ activeTab, setActiveTab }) {
       id: "add-hostel",
       name: "Add Hostel",
       icon: PlusCircle,
+    },
+    {
+      id: "users-management",
+      name: "User Management",
+      icon: Users,
+    },
+    {
+      id: "listings-management",
+      name: "Listings Verification",
+      icon: Building,
+    },
+    {
+      id: "reviews-moderation",
+      name: "Review Moderation",
+      icon: Star,
     },
   ];
 

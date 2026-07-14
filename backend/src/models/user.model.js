@@ -46,6 +46,16 @@ const userSchema = new mongoose.Schema(
         ref: "Hostel",
       },
     ],
+    preferredCity: {
+      type: String,
+      default: "",
+    },
+    savedListings: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Hostel",
+      },
+    ],
   },
   {
     timestamps: true,

@@ -11,6 +11,7 @@ const {
   getSingleHostel,
   updateHostel,
   deleteHostel,
+  toggleVerifyHostel,
 } = require("../controllers/hostel.controller");
 
 router.post("/", protect, adminOnly, createHostel);
@@ -24,5 +25,7 @@ router.get("/:id", getSingleHostel);
 router.put("/:id", protect, adminOnly, updateHostel);
 
 router.delete("/:id", protect, adminOnly, deleteHostel);
+
+router.put("/:id/verify", protect, adminOnly, toggleVerifyHostel);
 
 module.exports = router;
